@@ -6,7 +6,7 @@ import type { UserTier } from '../src/lib/ai/types'
 async function getUserTier(userId: string): Promise<UserTier> {
     const supabase = createAdminClient()
     const { data, error } = await supabase
-        .from('profiles')
+        .from('ready_profiles')
         .select('tier')
         .eq('id', userId)
         .single()
@@ -96,8 +96,9 @@ export const handler: Handler = async (event) => {
                 user_id: userId,
                 target_role: targetRole,
                 current_skills: skills,
-                job_requirements: requirements,
-                analysis_results: analysis,
+                gaps: analysis.gaps,
+                strengths: analysis.strengths,
+                action_plan: analysis.actionPlan,
                 created_at: new Date().toISOString()
             })
             .select()

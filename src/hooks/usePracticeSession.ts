@@ -25,10 +25,10 @@ export function usePracticeSession() {
         setError(null)
         try {
             const { data, error: dbError } = await (supabase
-                .from('practice_sessions' as any)
+                .from('interview_practice_sessions')
                 .insert({
                     user_id: user.id,
-                    practice_prep_id: prepId || null,
+                    interview_prep_id: prepId || null,
                     questions: questions as any,
                     status: 'active',
                     practice_data: [] as any
@@ -69,7 +69,7 @@ export function usePracticeSession() {
 
         try {
             const { data, error: dbError } = await (supabase
-                .from('practice_sessions' as any)
+                .from('interview_practice_sessions')
                 .update({
                     practice_data: newPracticeData as any,
                     updated_at: new Date().toISOString()
@@ -91,7 +91,7 @@ export function usePracticeSession() {
 
         try {
             const { data, error: dbError } = await (supabase
-                .from('practice_sessions' as any)
+                .from('interview_practice_sessions')
                 .update({
                     status: 'completed',
                     overall_feedback: overallFeedback || null,
@@ -115,7 +115,7 @@ export function usePracticeSession() {
         setLoading(true)
         try {
             const { data, error: dbError } = await (supabase
-                .from('practice_sessions' as any)
+                .from('interview_practice_sessions')
                 .select('*')
                 .eq('id', sessionId)
                 .eq('user_id', user.id)

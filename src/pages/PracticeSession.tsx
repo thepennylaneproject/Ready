@@ -44,7 +44,7 @@ export default function PracticeSession() {
         try {
             // Fetch Prep Questions
             const { data, error } = await supabase
-                .from('practice_preps')
+                .from('interview_prep')
                 .select('*')
                 .eq('id', id)
                 .eq('user_id', user.id)
@@ -87,7 +87,7 @@ export default function PracticeSession() {
                     userAnswer,
                     position: prep?.position,
                     company: prep?.company || 'General Practice',
-                    practice_prep_id: prep?.id
+                    interview_prep_id: prep?.id
                 })
             })
 

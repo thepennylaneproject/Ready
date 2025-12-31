@@ -41,7 +41,7 @@ export default function PracticeCenter() {
         try {
             // 1. Fetch Prep Templates
             const { data: prepData, error: prepError } = await supabase
-                .from('practice_preps')
+                .from('interview_prep')
                 .select('*')
                 .eq('user_id', user.id)
                 .order('created_at', { ascending: false })
@@ -51,7 +51,7 @@ export default function PracticeCenter() {
 
             // 2. Fetch Practice History
             const { data: sessionData, error: sessionError } = await supabase
-                .from('practice_sessions')
+                .from('interview_practice_sessions')
                 .select('*')
                 .eq('user_id', user.id)
                 .order('created_at', { ascending: false })
@@ -194,7 +194,7 @@ export default function PracticeCenter() {
                     ) : (
                         <div className="history-grid">
                             {sessions.map(session => {
-                                const prepTemplate = preps.find(p => p.id === session.practice_prep_id)
+                                const prepTemplate = preps.find(p => p.id === session.interview_prep_id)
                                 const avgScore = session.practice_data.length > 0
                                     ? Math.round(session.practice_data.reduce((acc, curr) => acc + curr.score, 0) / session.practice_data.length)
                                     : 0

@@ -68,7 +68,7 @@ export async function requireAuth(event: HandlerEvent) {
 export async function getUserProfile(userId: string) {
   const supabase = createAdminClient();
   
-  const response = await supabase.from('profiles').select().eq('user_id', userId).single();
+  const response = await supabase.from('ready_profiles').select().eq('id', userId).single();
   const profile = (response as any)?.data;
   const error = (response as any)?.error;
   

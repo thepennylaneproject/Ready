@@ -150,7 +150,7 @@ export function usePerformance() {
 
             // Fetch practice sessions
             const { data: practiceSessions } = await supabase
-                .from('practice_sessions')
+                .from('interview_practice_sessions')
                 .select('*')
                 .eq('user_id', user.id)
                 .order('created_at', { ascending: false })
@@ -188,9 +188,9 @@ export function usePerformance() {
                 .limit(1)
                 .single()
 
-            const gaps = (skillAnalyses as any)?.skill_gaps || []
+            const gaps = (skillAnalyses as any)?.gaps || []
             const totalGaps = gaps.length
-            const addressedGaps = gaps.filter((g: any) => g.addressed).length
+            const addressedGaps = gaps.filter((g: any) => g.status === 'addressed').length
 
             const skillGaps: SkillGapPerformance = {
                 totalGaps,
