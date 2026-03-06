@@ -39,22 +39,27 @@ export default function PracticeCenter() {
         if (!user?.id) return
         setLoading(true)
         try {
-            // 1. Fetch Prep Templates
-            const { data: prepData, error: prepError } = await supabase
-                .from('interview_prep')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false })
+            // Fetch prep templates and practice history in parallel
+            const [
+                { data: prepData, error: prepError },
+                { data: sessionData, error: sessionError },
+            ] = await Promise.all([
+                supabase
+                    .from('interview_prep')
+                    .select('id, user_id, position, company, questions, created_at, updated_at')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+                    .limit(20),
+                supabase
+                    .from('interview_practice_sessions')
+                    .select('id, user_id, interview_prep_id, status, questions, practice_data, overall_feedback, created_at, updated_at')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+                    .limit(50),
+            ])
 
             if (prepError) throw prepError
             setPreps(prepData as any[])
-
-            // 2. Fetch Practice History
-            const { data: sessionData, error: sessionError } = await supabase
-                .from('interview_practice_sessions')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false })
 
             if (sessionError) throw sessionError
             setSessions(sessionData as any[])
@@ -194,7 +199,7 @@ export default function PracticeCenter() {
                     ) : (
                         <div className="history-grid">
                             {sessions.map(session => {
-                                const prepTemplate = preps.find(p => p.id === session.interview_prep_id)
+                                const prepTemplate = preps.find(p => p.id === session.practice_prep_id)
                                 const avgScore = session.practice_data.length > 0
                                     ? Math.round(session.practice_data.reduce((acc, curr) => acc + curr.score, 0) / session.practice_data.length)
                                     : 0

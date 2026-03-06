@@ -5,7 +5,7 @@
  * Paste rejection text, get actionable coaching.
  */
 
-import React, { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { Icon } from '../ui/Icon'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
@@ -154,8 +154,9 @@ export function RejectionCoaching({ onComplete }: RejectionCoachingProps) {
                     </div>
 
                     <div className="input-group mt-4">
-                        <label>Role Context (Optional)</label>
+                        <label htmlFor="rejection-role-context">Role Context (Optional)</label>
                         <input
+                            id="rejection-role-context"
                             type="text"
                             className="form-input"
                             placeholder="e.g. Senior Product Manager at Stripe"
@@ -165,8 +166,9 @@ export function RejectionCoaching({ onComplete }: RejectionCoachingProps) {
                     </div>
 
                     <div className="input-group mt-4">
-                        <label>Rejection Email</label>
+                        <label htmlFor="rejection-email-text">Rejection Email</label>
                         <textarea
+                            id="rejection-email-text"
                             className="form-textarea"
                             placeholder="Paste the rejection email here..."
                             value={rejectionText}

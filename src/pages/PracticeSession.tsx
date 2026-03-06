@@ -5,7 +5,7 @@
  * Route: /practice/:id
  */
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { Icon } from '../components/ui/Icon'
@@ -45,7 +45,7 @@ export default function PracticeSession() {
             // Fetch Prep Questions
             const { data, error } = await supabase
                 .from('interview_prep')
-                .select('*')
+                .select('id, user_id, position, company, questions, created_at, updated_at')
                 .eq('id', id)
                 .eq('user_id', user.id)
                 .single()

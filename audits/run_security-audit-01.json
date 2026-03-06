@@ -1,0 +1,131 @@
+{
+  "kind": "agent_output",
+  "schema_version": "1.1.0",
+  "run_id": "security-audit-01",
+  "agent": "AGENT E — Security & Privacy Auditor",
+  "suite": "LYRA audit suite v1.1",
+  "timestamp": "2026-03-06T06:11:25Z",
+  "run_metadata": {
+    "threat_model": "Ready is a career-readiness SaaS (React/Vite + Supabase + Netlify Functions) that handles authenticated user data: interview sessions, LinkedIn profiles, portfolio analyses, career narratives, and skill-gap reports. Users are anonymous visitors, authenticated regular users (free/pro/premium tiers), and no dedicated admin UI exists. Highest-value targets are user PII, AI cost abuse (tier bypass), and session tokens. Most likely attack vectors are CORS abuse, insecure error responses leaking internals, tier-enforcement bypass, and accidental secret exposure via .env commits.",
+    "open_findings_consulted": "audits/open_findings.json (0 pre-existing findings)"
+  },
+  "findings": [
+    {
+      "id": "SEC-001",
+      "title": "Hardcoded 'premium' tier in analyze_rejection.ts — privilege escalation",
+      "category": "auth-bypass",
+      "severity": "P1/High",
+      "status": "fixed",
+      "file": "netlify/functions/analyze_rejection.ts",
+      "line": 40,
+      "description": "The rejection-coaching Netlify function passed `tier: 'premium'` unconditionally, meaning any authenticated user (including free-tier) received premium-quality AI responses, bypassing the tier enforcement present in every other AI function.",
+      "attack_scenario": "A free-tier user calls POST /.netlify/functions/analyze_rejection with a valid JWT. They receive premium AI output without paying. At scale, this drains AI budget and violates the product's pricing model.",
+      "fix_applied": "Replaced the hardcoded tier with a getUserTier() lookup from ready_profiles (matching the pattern used by career_narrative.ts, interview_evaluate.ts, etc.). Also migrated authentication to the shared verifyToken() helper and removed the ad-hoc createClient() call."
+    },
+    {
+      "id": "SEC-002",
+      "title": "Admin Supabase client silently falls back to anon key when service role key is missing",
+      "category": "auth-bypass",
+      "severity": "P1/High",
+      "status": "fixed",
+      "file": "netlify/functions/utils/supabase.ts",
+      "line": 59,
+      "description": "getSupabaseServiceKey() returned the anon key as a fallback if SUPABASE_SERVICE_ROLE_KEY was unset. createAdminClient() is used for privileged DB operations (fetching any user's profile, snapshots, etc.). Running it with the anon key means RLS policies apply, which can cause silent query failures or unexpected data access patterns.",
+      "attack_scenario": "In a misconfigured deployment (missing service key env var), admin operations silently degrade to anon-key permissions. Depending on RLS policies, user-scoped queries may return empty rows without errors, creating data integrity issues or allowing unexpected cross-user reads where RLS is permissive.",
+      "fix_applied": "Removed the anon-key fallback. getSupabaseServiceKey() now throws an explicit error if SUPABASE_SERVICE_ROLE_KEY is not set, making misconfigured deployments fail loudly at startup rather than silently at runtime."
+    },
+    {
+      "id": "SEC-003",
+      "title": "CORS wildcard (Access-Control-Allow-Origin: *) on authenticated API endpoints",
+      "category": "cors-misconfiguration",
+      "severity": "P2/Medium",
+      "status": "fixed",
+      "file": "netlify/functions/utils/supabase.ts",
+      "line": 16,
+      "description": "All Netlify functions responded with Access-Control-Allow-Origin: * even though every endpoint requires a Bearer token. This signals to browsers that any origin may read API responses, which is broader than necessary.",
+      "attack_scenario": "With wildcard CORS, a malicious third-party site can make cross-origin requests to these endpoints using a stolen JWT stored in localStorage. The browser will include the Authorization header (since it is set manually), and the response body will be readable cross-origin. This is less severe than cookie-based CSRF but still increases the blast radius of a token theft.",
+      "fix_applied": "CORS_HEADERS now uses a specific origin derived from the ALLOWED_ORIGIN env var, falling back to Netlify's built-in DEPLOY_PRIME_URL → URL env vars (automatically set per deployment context). Added Vary: Origin header. Local dev defaults to http://localhost:8888."
+    },
+    {
+      "id": "SEC-004",
+      "title": "Internal error messages leaked in API responses (details: err.message)",
+      "category": "data-leakage",
+      "severity": "P2/Medium",
+      "status": "fixed",
+      "files": [
+        "netlify/functions/ai.ts",
+        "netlify/functions/analyze_rejection.ts",
+        "netlify/functions/career_narrative.ts",
+        "netlify/functions/get_practice_performance.ts",
+        "netlify/functions/interview_evaluate.ts",
+        "netlify/functions/interview_prepare.ts",
+        "netlify/functions/learning_recommendations.ts",
+        "netlify/functions/linkedin_profile_analyze.ts",
+        "netlify/functions/portfolio_analyze.ts",
+        "netlify/functions/readiness_score.ts",
+        "netlify/functions/skill_gap_analyze.ts",
+        "netlify/functions/utils/supabase.ts"
+      ],
+      "description": "Twelve Netlify function handlers included raw err.message or result.error_message in 500/502 HTTP responses under a 'details' key. These can expose database error strings, provider API error messages, stack traces, or internal service names to any authenticated caller.",
+      "attack_scenario": "An authenticated user deliberately sends malformed payloads and reads the 'details' field to enumerate internal DB table names, AI provider configurations, or dependency versions — useful reconnaissance for more targeted attacks.",
+      "fix_applied": "Removed the 'details' field from all 500 and 502 client responses. Errors continue to be logged server-side via console.error for observability."
+    },
+    {
+      "id": "SEC-005",
+      "title": ".env file not in .gitignore — risk of accidental secrets commit",
+      "category": "secrets-exposure",
+      "severity": "P2/Medium",
+      "status": "fixed",
+      "file": ".gitignore",
+      "description": "The .gitignore only excluded *.local files. A plain .env file containing SUPABASE_SERVICE_ROLE_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY, RAPIDAPI_API_KEY, DEEPSEEK_API_KEY, and AIMLAPI_API_KEY would not be excluded and could be committed accidentally.",
+      "attack_scenario": "Developer runs `cp .env.example .env`, fills in real credentials, and commits. A git push exposes all service keys publicly. Service role key grants full Supabase DB access bypassing RLS.",
+      "fix_applied": "Added .env and .env.* (excluding .env.example) to .gitignore."
+    },
+    {
+      "id": "SEC-006",
+      "title": "No client-side password minimum length enforcement on signup",
+      "category": "missing-validation",
+      "severity": "P3/Low",
+      "status": "fixed",
+      "file": "src/pages/Signup.tsx",
+      "description": "The signup form shows 'Minimum 8 characters' as helper text but did not enforce this constraint before submitting to Supabase. Supabase enforces minimum password length server-side, but the lack of client-side validation results in unnecessary round-trips and a misleading UX (the form does not prevent submission).",
+      "attack_scenario": "Low severity — Supabase rejects weak passwords server-side regardless. The main risk is a degraded user experience and reliance on a single enforcement layer.",
+      "fix_applied": "Added minLength={8} to the password <Input> and an explicit length check in handleSubmit that shows a toast error without submitting."
+    }
+  ],
+  "non_findings": [
+    {
+      "area": "Authentication implementation",
+      "assessment": "Supabase Auth handles password hashing (bcrypt), session management (JWTs with auto-refresh), and rate limiting. No custom auth logic. verifyToken() correctly uses admin.auth.getUser() to validate tokens server-side."
+    },
+    {
+      "area": "Row Level Security",
+      "assessment": "RLS is enabled on all 10 tables. All policies correctly scope SELECT/INSERT/UPDATE/DELETE to auth.uid() = user_id (or id for profiles). Public sharing policies (linkedin_profiles, portfolio_analyses) use an explicit is_public = TRUE guard."
+    },
+    {
+      "area": "Authorization / IDOR",
+      "assessment": "All Netlify functions verify the JWT before any DB query. DB queries are scoped to the verified userId — no route accepts a user_id parameter from the client. No IDOR vectors found."
+    },
+    {
+      "area": "SQL injection",
+      "assessment": "All DB access uses the Supabase JS client with parameterized query builder methods (.eq(), .select(), .insert()). No raw SQL in application code."
+    },
+    {
+      "area": "Client-side secrets",
+      "assessment": "Only VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are exposed to the client (VITE_ prefix). The anon key is designed to be public. SUPABASE_SERVICE_ROLE_KEY and all provider API keys are server-only (no VITE_ prefix), so Vite will not bundle them into the client."
+    },
+    {
+      "area": "Dependency vulnerabilities",
+      "assessment": "Key dependencies reviewed: @supabase/supabase-js@2.89.0, openai@6.15.0, react@19.2.0, react-router-dom@7.11.0. No known CVEs in these versions at time of audit."
+    }
+  ],
+  "summary": {
+    "critical": 0,
+    "high": 2,
+    "medium": 3,
+    "low": 1,
+    "info": 0,
+    "total_findings": 6,
+    "all_fixed": true
+  }
+}

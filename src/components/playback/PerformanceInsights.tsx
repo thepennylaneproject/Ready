@@ -4,7 +4,6 @@
  * Dashboard component showing performance trends and readiness.
  */
 
-import React from 'react'
 import { Link } from 'react-router-dom'
 import { usePerformance } from '../../hooks/usePerformance'
 import { Icon } from '../ui/Icon'

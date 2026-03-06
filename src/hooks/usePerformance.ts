@@ -148,12 +148,41 @@ export function usePerformance() {
         try {
             setLoading(true)
 
-            // Fetch practice sessions
-            const { data: practiceSessions } = await supabase
-                .from('interview_practice_sessions')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false })
+            // Fetch all data sources in parallel to avoid sequential round-trips
+            const [
+                { data: practiceSessions },
+                { data: skillAnalyses },
+                { data: linkedin },
+                { data: portfolio },
+            ] = await Promise.all([
+                supabase
+                    .from('interview_practice_sessions')
+                    .select('status, practice_data')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+                    .limit(50),
+                supabase
+                    .from('skill_gap_analyses')
+                    .select('gaps')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .single(),
+                supabase
+                    .from('linkedin_profiles')
+                    .select('analysis_results')
+                    .eq('user_id', user.id)
+                    .order('updated_at', { ascending: false })
+                    .limit(1)
+                    .single(),
+                supabase
+                    .from('portfolio_analyses')
+                    .select('analysis_results')
+                    .eq('user_id', user.id)
+                    .order('updated_at', { ascending: false })
+                    .limit(1)
+                    .single(),
+            ])
 
             const sessions = practiceSessions || []
             const completedSessions = sessions.filter((s: any) => s.status === 'completed')
@@ -179,15 +208,6 @@ export function usePerformance() {
                 improvementPercent: improvement
             }
 
-            // Fetch skill gaps
-            const { data: skillAnalyses } = await supabase
-                .from('skill_gap_analyses')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .single()
-
             const gaps = (skillAnalyses as any)?.gaps || []
             const totalGaps = gaps.length
             const addressedGaps = gaps.filter((g: any) => g.status === 'addressed').length
@@ -197,23 +217,6 @@ export function usePerformance() {
                 addressedGaps,
                 progressPercent: totalGaps > 0 ? Math.round((addressedGaps / totalGaps) * 100) : 0
             }
-
-            // Fetch assessments
-            const { data: linkedin } = await supabase
-                .from('linkedin_profiles')
-                .select('analysis_results')
-                .eq('user_id', user.id)
-                .order('updated_at', { ascending: false })
-                .limit(1)
-                .single()
-
-            const { data: portfolio } = await supabase
-                .from('portfolio_analyses')
-                .select('analysis_results')
-                .eq('user_id', user.id)
-                .order('updated_at', { ascending: false })
-                .limit(1)
-                .single()
 
             const linkedinScore = (linkedin as any)?.analysis_results?.overall_score || null
             const portfolioScore = (portfolio as any)?.analysis_results?.overall_score || null

@@ -35,7 +35,7 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <Card className="w-full max-w-md p-8 shadow-xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-text">Login to Ready</h1>
+          <h1 className="text-3xl font-bold text-text">Sign in to Ready</h1>
           <p className="text-text-secondary mt-2">Access your interview readiness platform.</p>
         </div>
         

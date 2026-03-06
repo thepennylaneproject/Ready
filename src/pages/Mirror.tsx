@@ -68,14 +68,14 @@ export default function Mirror() {
     
     // LinkedIn state
     const [linkedinUrl, setLinkedinUrl] = useState('')
-    const [linkedinLoading, setLinkedinLoading] = useState(false)
+    const [_linkedinLoading, setLinkedinLoading] = useState(false)
     const [linkedinAnalyzing, setLinkedinAnalyzing] = useState(false)
     const [linkedinProfile, setLinkedinProfile] = useState<ProfileRow | null>(null)
     const [linkedinError, setLinkedinError] = useState<string | null>(null)
     
     // Portfolio state
     const [portfolioUrl, setPortfolioUrl] = useState('')
-    const [portfolioLoading, setPortfolioLoading] = useState(false)
+    const [_portfolioLoading, setPortfolioLoading] = useState(false)
     const [portfolioAnalyzing, setPortfolioAnalyzing] = useState(false)
     const [portfolioAnalysis, setPortfolioAnalysis] = useState<ProfileRow | null>(null)
     const [portfolioError, setPortfolioError] = useState<string | null>('')
@@ -87,13 +87,12 @@ export default function Mirror() {
         }
     }, [user])
 
-    const fetchLinkedInAnalysis = async () => {
+        const fetchLinkedInAnalysis = async () => {
         if (!user?.id) return
-        setLinkedinLoading(true)
         try {
             const { data } = await supabase
                 .from('linkedin_profiles')
-                .select('*')
+                .select('id, user_id, linkedin_url, analysis_results, created_at, updated_at, is_public, share_token')
                 .eq('user_id', user.id)
                 .order('updated_at', { ascending: false })
                 .limit(1)
@@ -105,18 +104,15 @@ export default function Mirror() {
             }
         } catch {
             console.warn('No existing LinkedIn profile found')
-        } finally {
-            setLinkedinLoading(false)
         }
     }
 
     const fetchPortfolioAnalysis = async () => {
         if (!user?.id) return
-        setPortfolioLoading(true)
         try {
             const { data } = await supabase
                 .from('portfolio_analyses')
-                .select('*')
+                .select('id, user_id, portfolio_url, analysis_results, created_at, updated_at, is_public, share_token')
                 .eq('user_id', user.id)
                 .order('updated_at', { ascending: false })
                 .limit(1)
@@ -128,8 +124,6 @@ export default function Mirror() {
             }
         } catch {
             console.warn('No existing portfolio analysis found')
-        } finally {
-            setPortfolioLoading(false)
         }
     }
 

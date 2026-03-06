@@ -143,7 +143,7 @@ export const handler: Handler = async (event) => {
         // ========================================================================
         const { data: narrative } = await supabase
             .from('career_narratives')
-            .select('*')
+            .select('origin_story, pivot_explanation, value_proposition, future_vision')
             .eq('user_id', userId)
             .limit(1)
             .single()
@@ -227,6 +227,6 @@ export const handler: Handler = async (event) => {
 
     } catch (err: any) {
         console.error('[Readiness] Handler error:', err)
-        return createResponse(500, { error: 'Internal server error', details: err.message })
+        return createResponse(500, { error: 'Internal server error' })
     }
 }

@@ -16,6 +16,7 @@ export const handler: Handler = async (event) => {
             .select('id, score, question, created_at, interview_prep_id')
             .eq('user_id', userId)
             .order('created_at', { ascending: false })
+            .limit(200)
 
         if (sessionsError) {
             console.error('[Performance] Failed to fetch sessions:', sessionsError)
@@ -114,6 +115,6 @@ export const handler: Handler = async (event) => {
             return { statusCode: 401, body: 'Unauthorized' }
         }
         console.error('[Performance] Unexpected error:', err)
-        return { statusCode: 500, body: err.message }
+        return { statusCode: 500, body: 'Internal server error' }
     }
 }

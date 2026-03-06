@@ -27,7 +27,7 @@ export function usePrepareInterview(): UsePrepareInterviewReturn {
       focusArea?: string
     ): Promise<InterviewPrepResponse | null> => {
       try {
-        return (await execute('interview-prep', {
+        return (await execute('prepare-interview', {
           position,
           company: company || 'General Practice',
           focusArea,

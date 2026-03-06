@@ -72,7 +72,7 @@ export const handler: Handler = async (event) => {
 
         if (!result.ok) {
             console.error('[Narrative] AI Generation failed:', result.error_message)
-            return createResponse(502, { error: 'Generation failed', details: result.error_message })
+            return createResponse(502, { error: 'Generation failed' })
         }
 
         const narrativeOutput = (result.output as any)?.data || result.output
@@ -115,6 +115,6 @@ export const handler: Handler = async (event) => {
 
     } catch (err: any) {
         console.error('[Narrative] Handler error:', err)
-        return createResponse(500, { error: 'Internal server error', details: err.message })
+        return createResponse(500, { error: 'Internal server error' })
     }
 }
