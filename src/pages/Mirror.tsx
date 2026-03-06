@@ -87,9 +87,8 @@ export default function Mirror() {
         }
     }, [user])
 
-    const fetchLinkedInAnalysis = async () => {
+        const fetchLinkedInAnalysis = async () => {
         if (!user?.id) return
-        setLinkedinLoading(true)
         try {
             const { data } = await supabase
                 .from('linkedin_profiles')
@@ -105,14 +104,11 @@ export default function Mirror() {
             }
         } catch {
             console.warn('No existing LinkedIn profile found')
-        } finally {
-            setLinkedinLoading(false)
         }
     }
 
     const fetchPortfolioAnalysis = async () => {
         if (!user?.id) return
-        setPortfolioLoading(true)
         try {
             const { data } = await supabase
                 .from('portfolio_analyses')
@@ -128,8 +124,6 @@ export default function Mirror() {
             }
         } catch {
             console.warn('No existing portfolio analysis found')
-        } finally {
-            setPortfolioLoading(false)
         }
     }
 

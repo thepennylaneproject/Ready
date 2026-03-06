@@ -78,7 +78,7 @@ export const handler: Handler = async (event) => {
 
         if (!aiResult.ok) {
             console.error('[Interview] AI Preparation failed:', aiResult.error_message)
-            return createResponse(502, { error: 'Preparation failed', details: aiResult.error_message })
+            return createResponse(502, { error: 'Preparation failed' })
         }
 
         const output = aiResult.output as any
@@ -116,6 +116,6 @@ export const handler: Handler = async (event) => {
 
     } catch (err: any) {
         console.error('[Interview] Handler error:', err)
-        return createResponse(500, { error: 'Internal server error', details: err.message })
+        return createResponse(500, { error: 'Internal server error' })
     }
 }

@@ -21,6 +21,10 @@ export default function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password.length < 8) {
+      showToast("Password must be at least 8 characters", "error");
+      return;
+    }
     setLoading(true);
     try {
       await signUpWithEmail(email, password, { firstName, lastName });
@@ -74,6 +78,7 @@ export default function Signup() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            minLength={8}
             autoComplete="new-password"
             helperText="Minimum 8 characters"
           />

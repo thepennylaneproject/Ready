@@ -82,7 +82,6 @@ export const handler: Handler = async (event) => {
     console.error("[AI Function] Handler error:", err);
     return createResponse(500, {
       error: "Internal server error",
-      details: err.message,
     });
   }
 };

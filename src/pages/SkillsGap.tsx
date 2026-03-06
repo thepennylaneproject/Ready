@@ -61,7 +61,6 @@ export default function SkillsGap() {
         .limit(5);
 
       if (fetchError) throw fetchError;
-      setPreviousAnalyses(data as any[] || []);
       
       // Load most recent analysis
       if (data && data.length > 0) {
