@@ -12,10 +12,20 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 // CORS helpers
 // ---------------------------------------------------------------------------
 
+// Restrict allowed origin to the configured site URL.
+// Netlify automatically sets DEPLOY_PRIME_URL (branch) and URL (production).
+// ALLOWED_ORIGIN can be set manually to override (e.g., for local dev or staging).
+const ALLOWED_ORIGIN =
+  process.env.ALLOWED_ORIGIN ||
+  process.env.DEPLOY_PRIME_URL ||
+  process.env.URL ||
+  'http://localhost:8888'
+
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
   'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Vary': 'Origin',
 }
 
 export function handleCORS(): HandlerResponse {
@@ -58,20 +68,19 @@ function getSupabaseUrl(): string {
 
 function getSupabaseServiceKey(): string {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  const anonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY
 
-  if (!serviceKey && !anonKey) {
+  if (!serviceKey) {
     throw new Error(
-      'No Supabase key found. Set SUPABASE_SERVICE_ROLE_KEY or VITE_SUPABASE_ANON_KEY.'
+      'SUPABASE_SERVICE_ROLE_KEY is not set. The admin client requires the service role key.'
     )
   }
 
-  return serviceKey || (anonKey as string)
+  return serviceKey
 }
 
 /**
  * Server side admin client.
- * Uses service role key if available, falls back to anon key.
+ * Requires SUPABASE_SERVICE_ROLE_KEY — bypasses Row Level Security.
  */
 export function createAdminClient(): SupabaseClient {
   const url = getSupabaseUrl()
@@ -176,7 +185,6 @@ export function withErrorHandler(handler: NetlifyHandler): Handler {
       return createResponse(500, {
         success: false,
         error: 'Internal server error',
-        message: err?.message || String(err),
       })
     }
   }

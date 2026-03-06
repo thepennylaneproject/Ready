@@ -1,8 +1,20 @@
-import { createClient } from '@supabase/supabase-js'
 import { routeLegacyTask } from './ai/legacyTaskRouter'
+import { createAdminClient, verifyToken } from './utils/supabase'
+import type { UserTier } from '../src/lib/ai/types'
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+async function getUserTier(userId: string): Promise<UserTier> {
+    const supabase = createAdminClient()
+    const { data, error } = await supabase
+        .from('ready_profiles')
+        .select('tier')
+        .eq('id', userId)
+        .single()
+
+    if (error || !data) {
+        return 'free'
+    }
+    return (data.tier as UserTier) || 'free'
+}
 
 export const handler = async (event: any) => {
     if (event.httpMethod !== 'POST') {
@@ -17,27 +29,20 @@ export const handler = async (event: any) => {
         }
 
         // Verify User
-        const authHeader = event.headers.authorization
-        if (!authHeader) {
+        const authHeader = event.headers.authorization || event.headers.Authorization
+        const { userId, error: authError } = await verifyToken(authHeader)
+        if (authError || !userId) {
             return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) }
         }
-        const token = authHeader.split(' ')[1]
 
-        const supabase = createClient(supabaseUrl!, supabaseServiceKey!)
-
-        // Verify ownership
-        const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-        if (authError || !user) {
-            return { statusCode: 401, body: JSON.stringify({ error: 'Invalid token' }) }
-        }
-
-        // Call AI for rejection coaching
+        // Call AI for rejection coaching using the user's actual tier
+        const tier = await getUserTier(userId)
         const result = await routeLegacyTask('rejection-coaching', {
             rejectionText,
             context: context || {}
         }, {
-            userId: user.id,
-            tier: 'premium',
+            userId,
+            tier,
         })
 
         if (!result.ok) {
@@ -48,10 +53,11 @@ export const handler = async (event: any) => {
 
         // Optionally save to database for tracking
         try {
+            const supabase = createAdminClient()
             await supabase
                 .from('rejection_analyses')
                 .insert({
-                    user_id: user.id,
+                    user_id: userId,
                     rejection_text: rejectionText,
                     analysis: analysis,
                     created_at: new Date().toISOString()
@@ -74,7 +80,7 @@ export const handler = async (event: any) => {
         console.error('Error analyzing rejection:', error)
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
+            body: JSON.stringify({ error: 'Internal server error' }),
         }
     }
 }
