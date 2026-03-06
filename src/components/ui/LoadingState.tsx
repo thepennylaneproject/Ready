@@ -31,7 +31,7 @@ export function LoadingState({
     size = 'md',
     centered = true,
     fullPage = false,
-}: LoadingStateProps): React.ReactElement {
+}: LoadingStateProps) {
     const content = (
         <div className={`loading-state loading-state--${size} ${centered ? 'loading-state--centered' : ''}`}>
             <div className="loading-state__spinner">
@@ -62,7 +62,7 @@ export function LoadingState({
 // SKELETON LOADERS
 // ═══════════════════════════════════════════════════════════════════════════
 
-export function SkeletonLine({ width = '100%' }: { width?: string }): React.ReactElement {
+export function SkeletonLine({ width = '100%' }: { width?: string }) {
     return (
         <>
             <div className="skeleton-line" style={{ width }} />
@@ -71,7 +71,7 @@ export function SkeletonLine({ width = '100%' }: { width?: string }): React.Reac
     )
 }
 
-export function SkeletonCard(): React.ReactElement {
+export function SkeletonCard() {
     return (
         <>
             <div className="skeleton-card">

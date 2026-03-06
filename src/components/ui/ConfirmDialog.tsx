@@ -5,7 +5,7 @@
  * Ensures users don't accidentally delete or perform irreversible actions.
  */
 
-import React from 'react'
+import type React from 'react'
 import { Icon } from './Icon'
 import { Button } from './Button'
 
@@ -37,7 +37,7 @@ export function ConfirmDialog({
     variant = 'default',
     onConfirm,
     onCancel,
-}: ConfirmDialogProps): React.ReactElement | null {
+}: ConfirmDialogProps): React.JSX.Element | null {
     if (!isOpen) return null
 
     const handleBackdropClick = (e: React.MouseEvent) => {

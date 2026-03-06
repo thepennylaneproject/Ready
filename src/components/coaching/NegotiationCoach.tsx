@@ -5,7 +5,7 @@
  * Persists to negotiation_sessions table.
  */
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useAITask } from '../../hooks/useAITask'
 import { useAuth } from '../../contexts/AuthContext'
 import { useToast } from '../ui/Toast'
@@ -46,6 +46,7 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
     // Results state
     const [strategy, setStrategy] = useState('')
     const [responses, setResponses] = useState<string[]>([])
+    const [_currentSession, setCurrentSession] = useState<NegotiationSession | null>(null)
     const [previousSessions, setPreviousSessions] = useState<NegotiationSession[]>([])
 
     const fetchPreviousSessions = useCallback(async () => {
