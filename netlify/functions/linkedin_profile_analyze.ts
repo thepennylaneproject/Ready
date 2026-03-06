@@ -92,7 +92,7 @@ export const handler: Handler = async (event) => {
 
         if (!result.ok) {
             console.error('[LinkedIn] AI Analysis failed:', result.error_message)
-            return createResponse(502, { error: 'Analysis failed', details: result.error_message })
+            return createResponse(502, { error: 'Analysis failed' })
         }
 
         const analysisResults = (result.output as any)?.data || result.output
@@ -125,6 +125,6 @@ export const handler: Handler = async (event) => {
 
     } catch (err: any) {
         console.error('[LinkedIn] Handler error:', err)
-        return createResponse(500, { error: 'Internal server error', details: err.message })
+        return createResponse(500, { error: 'Internal server error' })
     }
 }

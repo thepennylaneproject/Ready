@@ -5,7 +5,6 @@
  * Replaces various "Loading...", "Loading your dashboard...", etc. strings.
  */
 
-import React from 'react'
 import { Icon } from './Icon'
 
 // ═══════════════════════════════════════════════════════════════════════════
