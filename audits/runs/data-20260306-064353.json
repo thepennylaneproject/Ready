@@ -1,0 +1,222 @@
+{
+  "schema_version": "1.1.0",
+  "kind": "agent_output",
+  "run_id": "data-20260306-064353",
+  "suite": "data",
+  "agent": {
+    "name": "schema-auditor",
+    "role": "Data Integrity / Schema / RLS Auditor",
+    "inputs_used": [
+      "supabase/migrations/001_ready_schema.sql",
+      "supabase/migrations/20251231_add_tier_to_profiles.sql",
+      "supabase/migrations/20260101_add_interview_sessions.sql",
+      "supabase/migrations/add_onboarding_cols.sql",
+      "supabase/migrations/create_profile_trigger.sql",
+      "supabase/migrations/fix_rls.sql",
+      "src/types/index.ts",
+      "src/types/ai-responses.types.ts",
+      "src/lib/supabase.ts",
+      "src/lib/readiness.ts",
+      "src/contexts/AuthContext.tsx",
+      "netlify/functions/utils/supabase.ts",
+      "netlify/functions/utils/validation.ts",
+      "netlify/functions/interview_evaluate.ts",
+      "netlify/functions/interview_prepare.ts",
+      "netlify/functions/skill_gap_analyze.ts",
+      "netlify/functions/get_practice_performance.ts",
+      ".env.example"
+    ],
+    "stop_conditions_hit": []
+  },
+  "coverage": {
+    "files_examined": 18,
+    "files_skipped": [],
+    "coverage_complete": true,
+    "notes": "No Prisma/Drizzle ORM. Database layer is Supabase (Postgres + RLS). No Zod/Yup/Joi validation library — custom validation functions only. No seed files or data fixtures found."
+  },
+  "findings": [
+    {
+      "id": "data-001",
+      "category": "schema-mismatch",
+      "severity": "high",
+      "status": "fixed",
+      "title": "Missing handle_updated_at() trigger function",
+      "description": "001_ready_schema.sql defines 8 BEFORE UPDATE triggers that call public.handle_updated_at(), but this function is never defined in any migration file. A comment states the function is assumed to exist from an external schema ('Relevnt schema'). On a fresh database deployment all UPDATE operations on ready_profiles, interview_prep, interview_practice_sessions, linkedin_profiles, portfolio_analyses, skill_gap_analyses, career_narratives, and negotiation_sessions will fail with 'function public.handle_updated_at() does not exist'.",
+      "affected_files": [
+        "supabase/migrations/001_ready_schema.sql"
+      ],
+      "fix": "Added supabase/migrations/20250101_add_handle_updated_at.sql defining the function with CREATE OR REPLACE.",
+      "detail_file": "audits/findings/data-001.md"
+    },
+    {
+      "id": "data-002",
+      "category": "type-drift",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "ReadyProfile TypeScript interface missing tier field",
+      "description": "Migration 20251231_add_tier_to_profiles.sql adds tier TEXT DEFAULT 'free' to ready_profiles, but the ReadyProfile interface in src/types/index.ts does not declare this field. AuthContext casts select('*') results to ReadyProfile, silently dropping the tier value. Any component accessing profile.tier will receive undefined.",
+      "affected_files": [
+        "src/types/index.ts",
+        "supabase/migrations/20251231_add_tier_to_profiles.sql"
+      ],
+      "fix": "Added tier: string field to the ReadyProfile interface.",
+      "detail_file": "audits/findings/data-002.md"
+    },
+    {
+      "id": "data-003",
+      "category": "type-drift",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "No TypeScript type for interview_sessions table",
+      "description": "Migration 20260101_add_interview_sessions.sql creates the interview_sessions table (id, user_id, interview_prep_id, question, user_answer, feedback JSONB NOT NULL, score INTEGER, created_at). No TypeScript interface exists for this table. interview_evaluate.ts and get_practice_performance.ts interact with this table using untyped any objects.",
+      "affected_files": [
+        "src/types/index.ts",
+        "supabase/migrations/20260101_add_interview_sessions.sql",
+        "netlify/functions/interview_evaluate.ts",
+        "netlify/functions/get_practice_performance.ts"
+      ],
+      "fix": "Added InterviewSession interface to src/types/index.ts.",
+      "detail_file": "audits/findings/data-003.md"
+    },
+    {
+      "id": "data-004",
+      "category": "schema-mismatch",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "skill_gap_analyze.ts references non-existent analysis_results column",
+      "description": "skill_gap_analyze.ts line 115 reads savedAnalysis?.analysis_results. The skill_gap_analyses table has no analysis_results column; its JSONB output columns are gaps, strengths, and action_plan. The expression always evaluates to undefined and silently falls back to the in-memory analysis variable, masking the schema mismatch.",
+      "affected_files": [
+        "netlify/functions/skill_gap_analyze.ts",
+        "supabase/migrations/001_ready_schema.sql"
+      ],
+      "fix": "Removed the non-existent column reference; the function now always returns the local analysis object.",
+      "detail_file": "audits/findings/data-004.md"
+    },
+    {
+      "id": "data-005",
+      "category": "missing-rls",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "interview_sessions table missing UPDATE and DELETE RLS policies",
+      "description": "The interview_sessions table has RLS enabled with only SELECT and INSERT policies. No UPDATE or DELETE policies exist. Users cannot delete their own interview history records through the anon key client, which is a potential GDPR concern. The server-side admin client bypasses RLS on inserts, so inserts succeed but client-side deletes are silently blocked.",
+      "affected_files": [
+        "supabase/migrations/20260101_add_interview_sessions.sql"
+      ],
+      "fix": "Added UPDATE and DELETE policies for interview_sessions in supabase/migrations/20260306_fix_missing_rls_policies.sql.",
+      "detail_file": "audits/findings/data-005.md"
+    },
+    {
+      "id": "data-006",
+      "category": "missing-rls",
+      "severity": "low",
+      "status": "fixed",
+      "title": "readiness_snapshots missing DELETE RLS policy",
+      "description": "readiness_snapshots has SELECT and INSERT RLS policies but no DELETE policy. The append-only snapshot pattern is intentional, but users are unable to delete their own snapshot records. The ON DELETE CASCADE on the auth.users FK ensures cleanup on account deletion, limiting the risk scope.",
+      "affected_files": [
+        "supabase/migrations/001_ready_schema.sql"
+      ],
+      "fix": "Added DELETE policy for readiness_snapshots in supabase/migrations/20260306_fix_missing_rls_policies.sql.",
+      "detail_file": "audits/findings/data-006.md"
+    },
+    {
+      "id": "data-007",
+      "category": "migration-gap",
+      "severity": "low",
+      "status": "fixed",
+      "title": "Three migration files lack timestamp prefixes",
+      "description": "add_onboarding_cols.sql, create_profile_trigger.sql, and fix_rls.sql have no date or sequence prefix, making their execution order relative to the timestamped migrations ambiguous. add_onboarding_cols.sql also duplicates columns already defined in 001_ready_schema.sql (safe due to IF NOT EXISTS, but indicates the migration predates the base schema). create_profile_trigger.sql and fix_rls.sql duplicate idempotent DDL from 001_ready_schema.sql.",
+      "affected_files": [
+        "supabase/migrations/add_onboarding_cols.sql",
+        "supabase/migrations/create_profile_trigger.sql",
+        "supabase/migrations/fix_rls.sql"
+      ],
+      "fix": "Files renamed to 20250601_add_onboarding_cols.sql, 20250602_create_profile_trigger.sql, 20250603_fix_rls.sql.",
+      "detail_file": "audits/findings/data-007.md"
+    }
+  ],
+  "summary": {
+    "total_findings": 7,
+    "by_severity": {
+      "high": 1,
+      "medium": 4,
+      "low": 2
+    },
+    "by_category": {
+      "schema-mismatch": 2,
+      "type-drift": 2,
+      "missing-rls": 2,
+      "migration-gap": 1,
+      "constraint-violation": 0,
+      "orphaned-data": 0,
+      "validation-gap": 0
+    },
+    "all_fixed": true
+  },
+  "rls_audit": {
+    "tables_with_rls_enabled": [
+      "ready_profiles",
+      "interview_prep",
+      "interview_practice_sessions",
+      "linkedin_profiles",
+      "portfolio_analyses",
+      "skill_gap_analyses",
+      "learning_progress",
+      "career_narratives",
+      "negotiation_sessions",
+      "readiness_snapshots",
+      "interview_sessions"
+    ],
+    "tables_without_rls": [],
+    "policy_gaps": [
+      {
+        "table": "interview_sessions",
+        "missing_operations": ["UPDATE", "DELETE"],
+        "finding_id": "data-005",
+        "fixed": true
+      },
+      {
+        "table": "readiness_snapshots",
+        "missing_operations": ["DELETE"],
+        "finding_id": "data-006",
+        "fixed": true
+      }
+    ],
+    "service_role_usage": "Used only in server-side Netlify functions via createAdminClient(). The anon key is used for the front-end Supabase client. Service role key is sourced from SUPABASE_SERVICE_ROLE_KEY env var (server-side only). The server-side client falls back to the anon key if the service role key is absent (netlify/functions/utils/supabase.ts:69), which silently degrades privilege — functions that rely on bypassing RLS may fail unexpectedly in environments where only the anon key is configured."
+  },
+  "migration_audit": {
+    "total_files": 9,
+    "sequencing": "Mixed: three files had no timestamp prefix (fixed). Remaining files use YYYYMMDD_ prefix or numeric prefix (001_). The function migration 20250101_add_handle_updated_at.sql runs before 001_ready_schema.sql in alphabetical sort order, ensuring the trigger function exists when triggers are created.",
+    "idempotency": "All migrations use IF NOT EXISTS / CREATE OR REPLACE / DROP … IF EXISTS patterns — safe to re-run.",
+    "not_null_without_default": "None found. The tier column added in 20251231 has DEFAULT 'free', safe for existing rows."
+  },
+  "type_drift_audit": {
+    "tables_with_types": [
+      "ready_profiles",
+      "interview_prep",
+      "interview_practice_sessions",
+      "linkedin_profiles",
+      "portfolio_analyses",
+      "skill_gap_analyses",
+      "learning_progress",
+      "career_narratives",
+      "negotiation_sessions",
+      "readiness_snapshots",
+      "interview_sessions"
+    ],
+    "tables_without_types_before_fix": [
+      "interview_sessions"
+    ],
+    "type_mismatches_before_fix": [
+      "ReadyProfile missing tier field"
+    ]
+  },
+  "validation_audit": {
+    "library": "custom (netlify/functions/utils/validation.ts)",
+    "coverage": "Validates required fields, UUID format, URL format, email format, score range (1-10), pagination params. No schema-level library (Zod/Yup/Joi).",
+    "gaps": [
+      "No validation enforcing DB column constraints (e.g., TEXT max length, JSONB structure).",
+      "interview_evaluate.ts does not call validateInterviewSessionData() before inserting — score range is not server-validated.",
+      "No Zod schema mirroring any database table."
+    ]
+  }
+}

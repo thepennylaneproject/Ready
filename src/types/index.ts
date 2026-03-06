@@ -175,6 +175,18 @@ export interface ReadyProfile {
   readiness_score: number
   last_practice_date: string | null
   assessments_completed: number
+  tier: string
   created_at: string
   updated_at: string
+}
+
+export interface InterviewSession {
+  id: string
+  user_id: string
+  interview_prep_id: string | null
+  question: string
+  user_answer: string
+  feedback: any
+  score: number | null
+  created_at: string
 }

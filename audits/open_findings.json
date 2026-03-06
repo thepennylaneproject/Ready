@@ -1,62 +1,62 @@
 {
   "schema_version": "1.1.0",
-  "last_updated": "2026-03-06T06:28:40.920Z",
+  "last_updated": "2026-03-06T06:43:53Z",
   "findings": [
     {
-      "id": "PERF-001",
-      "category": "select-star",
-      "severity": "medium",
-      "status": "fixed",
-      "introduced_by": "agent_D",
-      "fixed_in": "audits/perf-audit.json"
-    },
-    {
-      "id": "PERF-002",
-      "category": "n-plus-one",
+      "id": "data-001",
+      "category": "schema-mismatch",
       "severity": "high",
       "status": "fixed",
-      "introduced_by": "agent_D",
-      "fixed_in": "audits/perf-audit.json"
+      "title": "Missing handle_updated_at() trigger function",
+      "file": "supabase/migrations/001_ready_schema.sql"
     },
     {
-      "id": "PERF-003",
-      "category": "missing-limit",
+      "id": "data-002",
+      "category": "type-drift",
       "severity": "medium",
       "status": "fixed",
-      "introduced_by": "agent_D",
-      "fixed_in": "audits/perf-audit.json"
+      "title": "ReadyProfile TypeScript interface missing tier field",
+      "file": "src/types/index.ts"
     },
     {
-      "id": "PERF-004",
-      "category": "cache-miss",
+      "id": "data-003",
+      "category": "type-drift",
       "severity": "medium",
-      "status": "open",
-      "introduced_by": "agent_D",
-      "fixed_in": null
+      "status": "fixed",
+      "title": "No TypeScript type for interview_sessions table",
+      "file": "src/types/index.ts"
     },
     {
-      "id": "PERF-005",
-      "category": "bundle-size",
-      "severity": "low",
-      "status": "open",
-      "introduced_by": "agent_D",
-      "fixed_in": null
-    },
-    {
-      "id": "PERF-006",
-      "category": "api-cost",
+      "id": "data-004",
+      "category": "schema-mismatch",
       "severity": "medium",
-      "status": "open",
-      "introduced_by": "agent_D",
-      "fixed_in": null
+      "status": "fixed",
+      "title": "skill_gap_analyze.ts references non-existent analysis_results column",
+      "file": "netlify/functions/skill_gap_analyze.ts"
     },
     {
-      "id": "PERF-007",
-      "category": "render-waste",
+      "id": "data-005",
+      "category": "missing-rls",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "interview_sessions table missing UPDATE and DELETE RLS policies",
+      "file": "supabase/migrations/20260101_add_interview_sessions.sql"
+    },
+    {
+      "id": "data-006",
+      "category": "missing-rls",
       "severity": "low",
-      "status": "open",
-      "introduced_by": "agent_D",
-      "fixed_in": null
+      "status": "fixed",
+      "title": "readiness_snapshots missing DELETE RLS policy",
+      "file": "supabase/migrations/001_ready_schema.sql"
+    },
+    {
+      "id": "data-007",
+      "category": "migration-gap",
+      "severity": "low",
+      "status": "fixed",
+      "title": "Three migration files lack timestamp prefixes",
+      "file": "supabase/migrations/"
     }
   ]
 }
