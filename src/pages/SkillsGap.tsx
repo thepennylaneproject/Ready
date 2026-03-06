@@ -41,7 +41,7 @@ export default function SkillsGap() {
   const [targetRole, setTargetRole] = useState('');
   
   const [analysis, setAnalysis] = useState<SkillGapAnalysis | null>(null);
-  const [previousAnalyses, setPreviousAnalyses] = useState<SkillGapAnalysis[]>([]);
+  const [_previousAnalyses, setPreviousAnalyses] = useState<SkillGapAnalysis[]>([]);
 
   useEffect(() => {
     if (user) {

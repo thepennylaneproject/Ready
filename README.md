@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# Ready — Career Interview Preparation Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript + Vite app deployed on Netlify. Helps job seekers prepare for interviews with AI-powered coaching, skill-gap analysis, LinkedIn/portfolio review, and readiness scoring.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Prerequisites
 
-## React Compiler
+- Node.js 20+
+- npm 10+
+- A [Supabase](https://supabase.com) project
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Environment Variables
 
-## Expanding the ESLint configuration
+Copy `.env.example` to `.env.local` and fill in the values:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cp .env.example .env.local
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+| Variable | Required | Description |
+|---|---|---|
+| `VITE_SUPABASE_URL` | ✅ | Your Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | ✅ | Supabase anonymous (public) key |
+| `SUPABASE_SERVICE_ROLE_KEY` | ✅ (server-side) | Supabase service role key — used only in Netlify Functions, never exposed to the browser |
+| `ANTHROPIC_API_KEY` | Optional | Anthropic Claude API key for AI features |
+| `OPENAI_API_KEY` | Optional | OpenAI API key for AI features |
+| `RAPIDAPI_API_KEY` | Optional | RapidAPI key for LinkedIn profile scraping |
+| `DEEPSEEK_API_KEY` | Optional | DeepSeek API key for AI features |
+| `AIMLAPI_API_KEY` | Optional | AIML API key for AI features |
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+> **Note:** `VITE_` prefixed variables are embedded into the client bundle at build time. Never put secrets in `VITE_` variables.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Development
+
+```bash
+npm install
+npm run dev
 ```
+
+The app runs at `http://localhost:5173`. To run with Netlify Functions locally:
+
+```bash
+npx netlify dev
+```
+
+### Available Scripts
+
+| Script | Description |
+|---|---|
+| `npm run dev` | Start the Vite dev server |
+| `npm run build` | Typecheck and build for production |
+| `npm run typecheck` | Run TypeScript type checking without emitting files |
+| `npm run lint` | Run ESLint |
+| `npm run preview` | Preview the production build locally |
+| `npm run ci` | Run typecheck + build (mirrors the CI pipeline) |
+
+### Deployment
+
+The app is deployed to [Netlify](https://netlify.com). Configuration is in `netlify.toml`.
+
+- **Build command:** `npm run build`
+- **Publish directory:** `dist`
+- **Functions directory:** `netlify/functions`
+
+Set the environment variables above in the Netlify dashboard under **Site settings → Environment variables**.
+
+A health check is available at `/.netlify/functions/health`.
+
+## Tech Stack
+
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4
+- **Auth & Database:** Supabase
+- **AI:** OpenAI, Anthropic Claude, DeepSeek (via Netlify Functions)
+- **Deployment:** Netlify (functions + static)

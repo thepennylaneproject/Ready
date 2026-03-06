@@ -68,14 +68,14 @@ export default function Mirror() {
     
     // LinkedIn state
     const [linkedinUrl, setLinkedinUrl] = useState('')
-    const [linkedinLoading, setLinkedinLoading] = useState(false)
+    const [_linkedinLoading, setLinkedinLoading] = useState(false)
     const [linkedinAnalyzing, setLinkedinAnalyzing] = useState(false)
     const [linkedinProfile, setLinkedinProfile] = useState<ProfileRow | null>(null)
     const [linkedinError, setLinkedinError] = useState<string | null>(null)
     
     // Portfolio state
     const [portfolioUrl, setPortfolioUrl] = useState('')
-    const [portfolioLoading, setPortfolioLoading] = useState(false)
+    const [_portfolioLoading, setPortfolioLoading] = useState(false)
     const [portfolioAnalyzing, setPortfolioAnalyzing] = useState(false)
     const [portfolioAnalysis, setPortfolioAnalysis] = useState<ProfileRow | null>(null)
     const [portfolioError, setPortfolioError] = useState<string | null>('')
