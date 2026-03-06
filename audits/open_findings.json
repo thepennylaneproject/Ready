@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.1.0",
+  "last_updated": "2026-03-06T06:43:53Z",
+  "findings": [
+    {
+      "id": "data-001",
+      "category": "schema-mismatch",
+      "severity": "high",
+      "status": "fixed",
+      "title": "Missing handle_updated_at() trigger function",
+      "file": "supabase/migrations/001_ready_schema.sql"
+    },
+    {
+      "id": "data-002",
+      "category": "type-drift",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "ReadyProfile TypeScript interface missing tier field",
+      "file": "src/types/index.ts"
+    },
+    {
+      "id": "data-003",
+      "category": "type-drift",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "No TypeScript type for interview_sessions table",
+      "file": "src/types/index.ts"
+    },
+    {
+      "id": "data-004",
+      "category": "schema-mismatch",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "skill_gap_analyze.ts references non-existent analysis_results column",
+      "file": "netlify/functions/skill_gap_analyze.ts"
+    },
+    {
+      "id": "data-005",
+      "category": "missing-rls",
+      "severity": "medium",
+      "status": "fixed",
+      "title": "interview_sessions table missing UPDATE and DELETE RLS policies",
+      "file": "supabase/migrations/20260101_add_interview_sessions.sql"
+    },
+    {
+      "id": "data-006",
+      "category": "missing-rls",
+      "severity": "low",
+      "status": "fixed",
+      "title": "readiness_snapshots missing DELETE RLS policy",
+      "file": "supabase/migrations/001_ready_schema.sql"
+    },
+    {
+      "id": "data-007",
+      "category": "migration-gap",
+      "severity": "low",
+      "status": "fixed",
+      "title": "Three migration files lack timestamp prefixes",
+      "file": "supabase/migrations/"
+    }
+  ]
+}

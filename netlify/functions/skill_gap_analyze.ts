@@ -112,7 +112,7 @@ export const handler: Handler = async (event) => {
         return createResponse(200, {
             ok: true,
             data: {
-                analysis: savedAnalysis?.analysis_results || analysis,
+                analysis,
                 analysisId: savedAnalysis?.id,
                 trace_id: result.trace_id
             }
