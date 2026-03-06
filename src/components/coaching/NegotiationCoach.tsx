@@ -5,7 +5,7 @@
  * Persists to negotiation_sessions table.
  */
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useAITask } from '../../hooks/useAITask'
 import { useAuth } from '../../contexts/AuthContext'
 import { useToast } from '../ui/Toast'
@@ -46,7 +46,6 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
     // Results state
     const [strategy, setStrategy] = useState('')
     const [responses, setResponses] = useState<string[]>([])
-    const [currentSession, setCurrentSession] = useState<NegotiationSession | null>(null)
     const [previousSessions, setPreviousSessions] = useState<NegotiationSession[]>([])
 
     useEffect(() => {
@@ -112,7 +111,6 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
                         .single()
 
                     if (!error && savedSession) {
-                        setCurrentSession(savedSession as any)
                         onComplete?.(savedSession as any)
                         fetchPreviousSessions()
                     }
@@ -132,7 +130,6 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
         setTargetMax(session.target_max)
         setStrategy(session.strategy)
         setResponses(session.responses)
-        setCurrentSession(session)
     }
 
     const handleReset = () => {
@@ -143,7 +140,6 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
         setTargetMax(0)
         setStrategy('')
         setResponses([])
-        setCurrentSession(null)
     }
 
     return (

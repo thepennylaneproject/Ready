@@ -5,7 +5,7 @@
  * Simplified version without Relevnt-specific dependencies.
  */
 
-import { CSSProperties, ReactNode } from 'react'
+import { type CSSProperties, type ReactNode } from 'react'
 import { Button } from '../ui/Button'
 
 // ============================================================================

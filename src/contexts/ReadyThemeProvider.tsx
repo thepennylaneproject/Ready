@@ -5,7 +5,7 @@
  * Uses centralized color tokens optimized for interview readiness UI.
  */
 
-import { createContext, useContext, useMemo, useCallback, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useMemo, useCallback, useEffect, useState, type ReactNode } from 'react'
 
 // ============================================================================
 // TYPE DEFINITIONS

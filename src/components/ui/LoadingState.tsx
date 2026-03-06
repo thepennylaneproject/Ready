@@ -5,7 +5,6 @@
  * Replaces various "Loading...", "Loading your dashboard...", etc. strings.
  */
 
-import React from 'react'
 import { Icon } from './Icon'
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -32,7 +31,7 @@ export function LoadingState({
     size = 'md',
     centered = true,
     fullPage = false,
-}: LoadingStateProps): JSX.Element {
+}: LoadingStateProps) {
     const content = (
         <div className={`loading-state loading-state--${size} ${centered ? 'loading-state--centered' : ''}`}>
             <div className="loading-state__spinner">
@@ -63,7 +62,7 @@ export function LoadingState({
 // SKELETON LOADERS
 // ═══════════════════════════════════════════════════════════════════════════
 
-export function SkeletonLine({ width = '100%' }: { width?: string }): JSX.Element {
+export function SkeletonLine({ width = '100%' }: { width?: string }) {
     return (
         <>
             <div className="skeleton-line" style={{ width }} />
@@ -72,7 +71,7 @@ export function SkeletonLine({ width = '100%' }: { width?: string }): JSX.Elemen
     )
 }
 
-export function SkeletonCard(): JSX.Element {
+export function SkeletonCard() {
     return (
         <>
             <div className="skeleton-card">

@@ -5,7 +5,7 @@
  * Paste rejection text, get actionable coaching.
  */
 
-import React, { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { Icon } from '../ui/Icon'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
