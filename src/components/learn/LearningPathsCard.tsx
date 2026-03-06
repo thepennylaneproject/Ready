@@ -4,7 +4,6 @@
  * Shows recommended learning paths based on skill gaps.
  */
 
-import React from 'react'
 import { useLearningPaths, type LearningPath } from '../../hooks/useLearningPaths'
 
 interface LearningPathsCardProps {

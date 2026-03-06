@@ -115,6 +115,6 @@ export const handler: Handler = async (event) => {
             return { statusCode: 401, body: 'Unauthorized' }
         }
         console.error('[Performance] Unexpected error:', err)
-        return { statusCode: 500, body: err.message }
+        return { statusCode: 500, body: 'Internal server error' }
     }
 }

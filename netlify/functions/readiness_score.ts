@@ -227,6 +227,6 @@ export const handler: Handler = async (event) => {
 
     } catch (err: any) {
         console.error('[Readiness] Handler error:', err)
-        return createResponse(500, { error: 'Internal server error', details: err.message })
+        return createResponse(500, { error: 'Internal server error' })
     }
 }

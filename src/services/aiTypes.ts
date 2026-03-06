@@ -151,13 +151,17 @@ export interface AIHookConfig {
 // ============================================================================
 
 export class AIError extends Error {
+  code: string;
+  details?: Record<string, unknown>;
   constructor(
-    public code: string,
+    code: string,
     message: string,
-    public details?: Record<string, unknown>
+    details?: Record<string, unknown>
   ) {
     super(message);
     this.name = 'AIError';
+    this.code = code;
+    this.details = details;
   }
 }
 

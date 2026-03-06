@@ -5,7 +5,8 @@
  * instead of crashing the entire app with a white screen.
  */
 
-import React, { Component, ReactNode } from 'react'
+import React, { Component } from 'react'
+import type { ReactNode } from 'react'
 import { Icon } from './Icon'
 import { Button } from './Button'
 
@@ -86,7 +87,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                             </Button>
                         </div>
 
-                        {process.env.NODE_ENV === 'development' && this.state.error && (
+                        {import.meta.env.DEV && this.state.error && (
                             <details className="error-boundary__details">
                                 <summary>Error details (dev only)</summary>
                                 <pre>{this.state.error.message}</pre>

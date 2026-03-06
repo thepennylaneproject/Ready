@@ -142,7 +142,7 @@ export function Header({ userInitial, readinessScore = 78 }: HeaderProps) {
                     <hr />
                     <button onClick={handleLogout} className="logout-btn">
                       <LogOut size={16} />
-                      Logout
+                      Log out
                     </button>
                   </div>
                 )}

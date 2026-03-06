@@ -199,7 +199,7 @@ export default function PracticeCenter() {
                     ) : (
                         <div className="history-grid">
                             {sessions.map(session => {
-                                const prepTemplate = preps.find(p => p.id === session.interview_prep_id)
+                                const prepTemplate = preps.find(p => p.id === session.practice_prep_id)
                                 const avgScore = session.practice_data.length > 0
                                     ? Math.round(session.practice_data.reduce((acc, curr) => acc + curr.score, 0) / session.practice_data.length)
                                     : 0
