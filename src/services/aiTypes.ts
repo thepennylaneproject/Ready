@@ -153,7 +153,6 @@ export interface AIHookConfig {
 export class AIError extends Error {
   code: string;
   details?: Record<string, unknown>;
-
   constructor(
     code: string,
     message: string,

@@ -5,7 +5,7 @@
  * Persists to negotiation_sessions table.
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAITask } from '../../hooks/useAITask'
 import { useAuth } from '../../contexts/AuthContext'
 import { useToast } from '../ui/Toast'
@@ -48,13 +48,7 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
     const [responses, setResponses] = useState<string[]>([])
     const [previousSessions, setPreviousSessions] = useState<NegotiationSession[]>([])
 
-    useEffect(() => {
-        if (user) {
-            fetchPreviousSessions()
-        }
-    }, [user])
-
-    const fetchPreviousSessions = async () => {
+    const fetchPreviousSessions = useCallback(async () => {
         if (!user?.id) return
         
         try {
@@ -71,7 +65,13 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
         } catch (err) {
             console.warn('No previous sessions found')
         }
-    }
+    }, [user])
+
+    useEffect(() => {
+        if (user) {
+            fetchPreviousSessions()
+        }
+    }, [user, fetchPreviousSessions])
 
     const handleGenerateStrategy = async () => {
         if (!jobTitle || !offerSalary) {
@@ -163,8 +163,9 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
                 <div className="coach-form">
                     <div className="form-row">
                         <div className="input-group">
-                            <label>Job Title</label>
+                            <label htmlFor="neg-job-title">Job Title</label>
                             <input
+                                id="neg-job-title"
                                 type="text"
                                 className="form-input"
                                 placeholder="e.g. Senior Software Engineer"
@@ -173,8 +174,9 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
                             />
                         </div>
                         <div className="input-group">
-                            <label>Company</label>
+                            <label htmlFor="neg-company">Company</label>
                             <input
+                                id="neg-company"
                                 type="text"
                                 className="form-input"
                                 placeholder="e.g. Stripe"
@@ -186,8 +188,9 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
 
                     <div className="form-row">
                         <div className="input-group">
-                            <label>Their Offer ($)</label>
+                            <label htmlFor="neg-offer-salary">Their Offer ($)</label>
                             <input
+                                id="neg-offer-salary"
                                 type="number"
                                 className="form-input"
                                 placeholder="e.g. 150000"
@@ -196,8 +199,9 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
                             />
                         </div>
                         <div className="input-group">
-                            <label>Your Target Min ($)</label>
+                            <label htmlFor="neg-target-min">Your Target Min ($)</label>
                             <input
+                                id="neg-target-min"
                                 type="number"
                                 className="form-input"
                                 placeholder="e.g. 165000"
@@ -206,8 +210,9 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
                             />
                         </div>
                         <div className="input-group">
-                            <label>Your Target Max ($)</label>
+                            <label htmlFor="neg-target-max">Your Target Max ($)</label>
                             <input
+                                id="neg-target-max"
                                 type="number"
                                 className="form-input"
                                 placeholder="e.g. 180000"

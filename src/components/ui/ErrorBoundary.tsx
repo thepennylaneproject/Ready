@@ -5,7 +5,8 @@
  * instead of crashing the entire app with a white screen.
  */
 
-import React, { Component, type ReactNode } from 'react'
+import React, { Component } from 'react'
+import type { ReactNode } from 'react'
 import { Icon } from './Icon'
 import { Button } from './Button'
 

@@ -85,7 +85,7 @@ export default function Mirror() {
         }
     }, [user])
 
-    const fetchLinkedInAnalysis = async () => {
+        const fetchLinkedInAnalysis = async () => {
         if (!user?.id) return
         try {
             const { data } = await supabase
