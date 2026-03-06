@@ -67,7 +67,7 @@ export default function LearningPaths() {
       // Get existing recommendations
       const { data: existingRecs } = await supabase
         .from('learning_recommendations')
-        .select('*')
+        .select('id, user_id, skill_gaps, resources, created_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)

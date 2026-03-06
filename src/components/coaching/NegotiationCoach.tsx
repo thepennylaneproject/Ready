@@ -61,7 +61,7 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
         try {
             const { data } = await supabase
                 .from('negotiation_sessions')
-                .select('*')
+                .select('id, user_id, job_title, company, offer_salary, target_min, target_max, strategy, responses, created_at, updated_at')
                 .eq('user_id', user.id)
                 .order('created_at', { ascending: false })
                 .limit(5)
