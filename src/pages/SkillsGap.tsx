@@ -55,7 +55,7 @@ export default function SkillsGap() {
     try {
       const { data, error: fetchError } = await supabase
         .from('skill_gap_analyses')
-        .select('*')
+        .select('id, user_id, target_role, missing_skills, recommendations, skill_gaps, created_at, updated_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(5);

@@ -1,170 +1,62 @@
 {
-  "kind": "agent_output",
-  "run_id": "ux-2026-03-06",
   "schema_version": "1.1.0",
-  "agent": "UX_FLOW_AND_COPY_CONSISTENCY_AUDITOR",
-  "suite": "LYRA v1.1",
-  "generated_at": "2026-03-06T06:11:23Z",
-  "coverage_complete": true,
-  "target": {
-    "repo": "thepennylaneproject/ready",
-    "branch": "copilot/audit-consistency-in-ui",
-    "framework": "React + TypeScript + Vite",
-    "router": "react-router-dom v7"
-  },
-  "routes_audited": [
-    { "path": "/login", "public": true, "has_loading": true, "has_error": true, "has_empty": false },
-    { "path": "/signup", "public": true, "has_loading": true, "has_error": true, "has_empty": false },
-    { "path": "/onboarding", "public": false, "has_loading": false, "has_error": false, "has_empty": false },
-    { "path": "/", "public": false, "has_loading": true, "has_error": true, "has_empty": true },
-    { "path": "/mirror", "public": false, "has_loading": false, "has_error": true, "has_empty": true },
-    { "path": "/mirror/linkedin", "public": false, "has_loading": false, "has_error": false, "has_empty": false, "note": "stub page" },
-    { "path": "/mirror/portfolio", "public": false, "has_loading": false, "has_error": false, "has_empty": false, "note": "stub page" },
-    { "path": "/practice", "public": false, "has_loading": true, "has_error": true, "has_empty": true },
-    { "path": "/practice/:id", "public": false, "has_loading": true, "has_error": true, "has_empty": false },
-    { "path": "/learn", "public": false, "has_loading": true, "has_error": true, "has_empty": true },
-    { "path": "/learn/paths", "public": false, "has_loading": true, "has_error": false, "has_empty": true },
-    { "path": "/coaching", "public": false, "has_loading": false, "has_error": false, "has_empty": false },
-    { "path": "/coaching/rejection", "public": false, "has_loading": true, "has_error": true, "has_empty": false },
-    { "path": "/coaching/negotiation", "public": false, "has_loading": true, "has_error": true, "has_empty": false },
-    { "path": "/playback", "public": false, "has_loading": true, "has_error": false, "has_empty": true },
-    { "path": "/settings", "public": false, "has_loading": false, "has_error": false, "has_empty": false, "note": "stub page" },
-    { "path": "/youre-ready", "public": false, "has_loading": false, "has_error": false, "has_empty": false }
-  ],
+  "last_updated": "2026-03-06T06:28:40.920Z",
   "findings": [
     {
-      "id": "UX-001",
-      "status": "fixed",
-      "category": "copy-mismatch",
+      "id": "PERF-001",
+      "category": "select-star",
       "severity": "medium",
-      "title": "Inconsistent logout label in desktop vs. mobile nav",
-      "description": "The desktop user dropdown showed 'Logout' (one word) while the mobile drawer used 'Log out' (two words). Both authentication triggers should use the same label.",
-      "location": "src/components/layout/Header.tsx",
-      "fix": "Changed desktop dropdown 'Logout' to 'Log out' to match mobile drawer."
-    },
-    {
-      "id": "UX-002",
       "status": "fixed",
-      "category": "copy-mismatch",
-      "severity": "low",
-      "title": "Login page heading uses 'Login' instead of 'Sign in'",
-      "description": "The login page <h1> read 'Login to Ready' while the submit button and the link on the signup page both use 'Sign In'. All sign-in entry points should use consistent terminology.",
-      "location": "src/pages/Login.tsx",
-      "fix": "Changed heading from 'Login to Ready' to 'Sign in to Ready'."
+      "introduced_by": "agent_D",
+      "fixed_in": "audits/perf-audit.json"
     },
     {
-      "id": "UX-003",
+      "id": "PERF-002",
+      "category": "n-plus-one",
+      "severity": "high",
       "status": "fixed",
-      "category": "a11y-gap",
-      "severity": "major",
-      "title": "Coaching form inputs missing accessible label association",
-      "description": "Form inputs in NegotiationCoach and RejectionCoaching had visible <label> elements but no htmlFor/id linkage. Screen readers could not announce which label belongs to which field.",
-      "location": [
-        "src/components/coaching/NegotiationCoach.tsx",
-        "src/components/coaching/RejectionCoaching.tsx"
-      ],
-      "fix": "Added htmlFor on all <label> elements and matching id attributes on all <input>/<textarea> elements."
+      "introduced_by": "agent_D",
+      "fixed_in": "audits/perf-audit.json"
     },
     {
-      "id": "UX-004",
-      "status": "fixed",
-      "category": "broken-flow",
-      "severity": "critical",
-      "title": "Build failures preventing app from shipping",
-      "description": "Multiple TypeScript compilation errors prevented production builds: unused React imports, incorrect type-only import syntax (verbatimModuleSyntax), parameter property declarations disallowed by erasableSyntaxOnly, wrong AI task names ('skills-gap' vs 'analyze-skills-gap', 'interview-prep' vs 'prepare-interview'), wrong DB column name ('interview_prep_id' vs 'practice_prep_id'), and JSX.Element namespace not found.",
-      "location": [
-        "src/services/aiTypes.ts",
-        "src/components/layout/AppLayout.tsx",
-        "src/components/ui/ErrorBoundary.tsx",
-        "src/components/ui/LoadingState.tsx",
-        "src/components/ui/ConfirmDialog.tsx",
-        "src/components/shared/Modal.tsx",
-        "src/contexts/ReadyThemeProvider.tsx",
-        "src/components/coaching/NegotiationCoach.tsx",
-        "src/components/coaching/RejectionCoaching.tsx",
-        "src/components/learn/LearningPathsCard.tsx",
-        "src/components/playback/PerformanceInsights.tsx",
-        "src/pages/PracticeSession.tsx",
-        "src/pages/YoureReady.tsx",
-        "src/pages/Mirror.tsx",
-        "src/pages/PracticeCenter.tsx",
-        "src/pages/SkillsGap.tsx",
-        "src/hooks/useAnalyzeSkillsGap.ts",
-        "src/hooks/usePrepareInterview.ts"
-      ],
-      "fix": "Fixed all 26 TypeScript compilation errors. Build now succeeds."
-    },
-    {
-      "id": "UX-005",
-      "status": "open",
-      "category": "missing-state",
-      "severity": "major",
-      "title": "Stub pages expose incomplete UI to users",
-      "description": "Three pages show only a heading and one sentence: /mirror/linkedin (LinkedIn Analysis), /mirror/portfolio (Portfolio Analysis), and /settings (Settings). Users landing on these routes see no loading state, no empty state, no meaningful actions, and no indication that the feature is coming.",
-      "location": [
-        "src/pages/LinkedInAnalysis.tsx",
-        "src/pages/PortfolioAnalysis.tsx",
-        "src/pages/Settings.tsx"
-      ],
-      "recommendation": "Either implement the feature or replace the stub with a proper 'Coming Soon' empty state component using the existing EmptyState UI component with a descriptive CTA."
-    },
-    {
-      "id": "UX-006",
-      "status": "open",
-      "category": "missing-state",
+      "id": "PERF-003",
+      "category": "missing-limit",
       "severity": "medium",
-      "title": "No error boundaries around feature sections",
-      "description": "The app has an ErrorBoundary component but it is only used at the top level in App.tsx (inferred). Individual page sections (Practice, Skills Gap, Coaching, Playback) have no per-section error boundaries. A single component crash will replace the entire page with the error fallback instead of degrading gracefully.",
-      "location": "src/App.tsx",
-      "recommendation": "Wrap each major route section with an ErrorBoundary to allow partial-page degradation."
+      "status": "fixed",
+      "introduced_by": "agent_D",
+      "fixed_in": "audits/perf-audit.json"
     },
     {
-      "id": "UX-007",
-      "status": "open",
-      "category": "a11y-gap",
+      "id": "PERF-004",
+      "category": "cache-miss",
       "severity": "medium",
-      "title": "Cloudinary hero and texture images have no alt text",
-      "description": "The theme system exposes heroImage and textureImage URLs via context. Any component rendering <img src={heroImage}> will produce an <img> with no alt attribute, which is a WCAG 2.1 Level A failure.",
-      "location": "src/contexts/ReadyThemeProvider.tsx",
-      "recommendation": "When rendering hero/texture images, always include alt='' (decorative) or a descriptive alt string, e.g. alt='Interview readiness hero illustration'."
-    },
-    {
-      "id": "UX-008",
       "status": "open",
-      "category": "nav-dead-end",
-      "severity": "low",
-      "title": "You're Ready page navigation ambiguity",
-      "description": "The /youre-ready celebration page is accessible via a direct route but is not linked from the main navigation. Users who navigate away cannot easily return to it. The trigger condition (80%+ readiness) is also not clearly communicated.",
-      "location": "src/pages/YoureReady.tsx",
-      "recommendation": "Either add a breadcrumb/back button or surface the milestone in the Playback or Dashboard pages so users can re-access the celebration summary."
+      "introduced_by": "agent_D",
+      "fixed_in": null
     },
     {
-      "id": "UX-009",
-      "status": "question",
-      "category": "copy-mismatch",
+      "id": "PERF-005",
+      "category": "bundle-size",
       "severity": "low",
-      "title": "Product voice guide undefined",
-      "description": "The app uses a mix of motivational ('Your story awaits'), instructional ('Paste the rejection email'), and casual ('Get unstuck') tones without a documented voice guide. This makes it difficult to audit copy for consistency or onboard new writers.",
-      "recommendation": "Define a product voice guide (e.g. 'Encouraging but direct. Second person. Action-first verbs.') and store it in docs/voice-guide.md."
+      "status": "open",
+      "introduced_by": "agent_D",
+      "fixed_in": null
+    },
+    {
+      "id": "PERF-006",
+      "category": "api-cost",
+      "severity": "medium",
+      "status": "open",
+      "introduced_by": "agent_D",
+      "fixed_in": null
+    },
+    {
+      "id": "PERF-007",
+      "category": "render-waste",
+      "severity": "low",
+      "status": "open",
+      "introduced_by": "agent_D",
+      "fixed_in": null
     }
-  ],
-  "summary": {
-    "total_findings": 9,
-    "fixed": 4,
-    "open": 4,
-    "questions": 1,
-    "by_severity": {
-      "critical": { "total": 1, "fixed": 1 },
-      "major": { "total": 2, "fixed": 1, "open": 1 },
-      "medium": { "total": 3, "fixed": 1, "open": 2 },
-      "low": { "total": 3, "fixed": 1, "open": 1, "questions": 1 }
-    },
-    "by_category": {
-      "broken-flow": 1,
-      "copy-mismatch": 3,
-      "a11y-gap": 2,
-      "missing-state": 2,
-      "nav-dead-end": 1
-    }
-  }
+  ]
 }

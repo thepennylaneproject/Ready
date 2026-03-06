@@ -92,7 +92,7 @@ export default function Mirror() {
         try {
             const { data } = await supabase
                 .from('linkedin_profiles')
-                .select('*')
+                .select('id, user_id, linkedin_url, analysis_results, created_at, updated_at, is_public, share_token')
                 .eq('user_id', user.id)
                 .order('updated_at', { ascending: false })
                 .limit(1)
@@ -112,7 +112,7 @@ export default function Mirror() {
         try {
             const { data } = await supabase
                 .from('portfolio_analyses')
-                .select('*')
+                .select('id, user_id, portfolio_url, analysis_results, created_at, updated_at, is_public, share_token')
                 .eq('user_id', user.id)
                 .order('updated_at', { ascending: false })
                 .limit(1)
