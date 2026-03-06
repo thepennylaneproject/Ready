@@ -37,7 +37,7 @@ export function ConfirmDialog({
     variant = 'default',
     onConfirm,
     onCancel,
-}: ConfirmDialogProps): JSX.Element | null {
+}: ConfirmDialogProps): React.ReactElement | null {
     if (!isOpen) return null
 
     const handleBackdropClick = (e: React.MouseEvent) => {

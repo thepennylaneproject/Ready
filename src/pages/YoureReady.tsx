@@ -5,7 +5,7 @@
  * Features confetti, achievement summary, and next-step CTAs.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import { ReadinessGauge } from '../components/shared/ReadinessGauge';

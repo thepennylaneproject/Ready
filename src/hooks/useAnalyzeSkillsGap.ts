@@ -27,7 +27,7 @@ export function useAnalyzeSkillsGap(): UseAnalyzeSkillsGapReturn {
       targetRole: string
     ): Promise<SkillsGapResponse | null> => {
       try {
-        return (await execute('skills-gap', {
+        return (await execute('analyze-skills-gap', {
           resumeContent,
           targetRole,
         })) as SkillsGapResponse;
