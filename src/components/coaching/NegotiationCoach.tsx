@@ -5,7 +5,7 @@
  * Persists to negotiation_sessions table.
  */
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useAITask } from '../../hooks/useAITask'
 import { useAuth } from '../../contexts/AuthContext'
 import { useToast } from '../ui/Toast'
@@ -48,30 +48,28 @@ export function NegotiationCoach({ onComplete }: NegotiationCoachProps) {
     const [responses, setResponses] = useState<string[]>([])
     const [previousSessions, setPreviousSessions] = useState<NegotiationSession[]>([])
 
-    const fetchPreviousSessions = useCallback(async () => {
-        if (!user?.id) return
-        
-        try {
-            const { data } = await supabase
-                .from('negotiation_sessions')
-                .select('id, user_id, job_title, company, offer_salary, target_min, target_max, strategy, responses, created_at, updated_at')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false })
-                .limit(5)
-
-            if (data) {
-                setPreviousSessions(data as any[])
-            }
-        } catch (err) {
-            console.warn('No previous sessions found')
-        }
-    }, [user])
-
     useEffect(() => {
-        if (user) {
-            fetchPreviousSessions()
+        if (!user?.id) return
+
+        const fetchPreviousSessions = async () => {
+            try {
+                const { data } = await supabase
+                    .from('negotiation_sessions')
+                    .select('id, user_id, job_title, company, offer_salary, target_min, target_max, strategy, responses, created_at, updated_at')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+                    .limit(5)
+
+                if (data) {
+                    setPreviousSessions(data as NegotiationSession[])
+                }
+            } catch {
+                console.warn('No previous sessions found')
+            }
         }
-    }, [user, fetchPreviousSessions])
+
+        fetchPreviousSessions()
+    }, [user?.id])
 
     const handleGenerateStrategy = async () => {
         if (!jobTitle || !offerSalary) {

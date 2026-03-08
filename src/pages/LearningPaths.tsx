@@ -76,7 +76,7 @@ export default function LearningPaths() {
       if (existingRecs) {
         setRecommendations(existingRecs as any);
       }
-    } catch (err) {
+    } catch {
       console.warn('No existing data found');
     }
   };

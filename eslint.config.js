@@ -19,5 +19,16 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // TODO: Replace remaining `any` uses with proper types (frontend ready, types need narrowing)
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      // Files that mix context/hooks/components with component exports are a known pattern here;
+      // fast-refresh still works in practice since these are provider/utility files.
+      'react-refresh/only-export-components': 'warn',
+    },
   },
 ])

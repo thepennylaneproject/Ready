@@ -145,7 +145,7 @@ export async function runAI(args: AIRunInput): Promise<AIRunResult> {
   }
 
   const candidates = buildCandidates(args.task, clampedQuality, spec.requires_json, tier)
-  let errors: string[] = []
+  const errors: string[] = []
   let lastProvider: string | undefined
   let lastModel: string | undefined
 
@@ -264,7 +264,7 @@ function clampQualityForTier(requested: AIQuality, tier: UserTier): AIQuality {
   return requested
 }
 
-function buildCandidates(task: string, quality: AIQuality, requiresJson: boolean, tier: UserTier): ModelOption[] {
+function buildCandidates(task: string, quality: AIQuality, requiresJson: boolean, _tier: UserTier): ModelOption[] {
   const hints = TASK_PROVIDER_HINTS[task as keyof typeof TASK_SPECS]
   const preferred = MODEL_REGISTRY.filter(
     (model) =>
