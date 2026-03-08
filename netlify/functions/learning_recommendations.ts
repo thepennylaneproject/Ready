@@ -210,7 +210,7 @@ export const handler: Handler = async (event) => {
 
     try {
         const body = JSON.parse(event.body || '{}')
-        const { skillGaps, freeOnly = true, maxResults = 10 } = body
+        const { skillGaps, freeOnly = true } = body
 
         if (!skillGaps || !Array.isArray(skillGaps) || skillGaps.length === 0) {
             return createResponse(400, { error: 'Missing or empty skillGaps array' })

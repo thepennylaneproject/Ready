@@ -281,7 +281,7 @@ export function useAITask(): UseAITaskReturn {
         systemPrompt: lastRequest.systemPrompt,
       });
       return result;
-    } catch (err) {
+    } catch {
       return null;
     }
   }, [execute, lastRequest]);

@@ -31,7 +31,7 @@ export function useAnalyzeSkillsGap(): UseAnalyzeSkillsGapReturn {
           resumeContent,
           targetRole,
         })) as SkillsGapResponse;
-      } catch (err) {
+      } catch {
         return null;
       }
     },

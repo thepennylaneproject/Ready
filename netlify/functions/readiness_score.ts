@@ -64,8 +64,6 @@ export const handler: Handler = async (event) => {
             const quantityScore = Math.min((sessions.length / 10) * 100, 100)
             practiceScore = Math.round(qualityScore * 0.7 + quantityScore * 0.3)
 
-            const meetsThreshold = avgScore >= 7 && sessions.length >= 3
-
             if (sessions.length < 3) {
                 recommendations.push('Complete at least 3 practice sessions')
             } else if (avgScore < 7) {

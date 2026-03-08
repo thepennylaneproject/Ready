@@ -68,12 +68,13 @@ export function RejectionCoaching({ onComplete }: RejectionCoachingProps) {
     const handleAction = useCallback(async (action: SuggestionAction, index: number) => {
         try {
             switch (action.type) {
-                case 'learning':
+                case 'learning': {
                     // Open Coursera search for the skill
                     const searchQuery = encodeURIComponent(action.data || 'professional skills')
                     window.open(`https://www.coursera.org/search?query=${searchQuery}`, '_blank')
                     showToast(`Opened courses for ${action.data}`, 'info')
                     break
+                }
                     
                 case 'networking':
                     showToast('Networking feature coming soon!', 'info')
@@ -81,7 +82,7 @@ export function RejectionCoaching({ onComplete }: RejectionCoachingProps) {
             }
             
             setAppliedActions(prev => new Set(prev).add(index))
-        } catch (err) {
+        } catch {
             showToast('Failed to apply action', 'error')
         }
     }, [showToast])

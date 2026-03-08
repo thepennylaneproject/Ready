@@ -42,8 +42,8 @@ export const handler: Handler = async (event) => {
         }
 
         // Build input for AI
-        let skills: string[] = currentSkills || []
-        let requirements: string[] = jobRequirements || []
+        const skills: string[] = currentSkills || []
+        const requirements: string[] = jobRequirements || []
 
         // If resume/JD provided instead of explicit arrays, let AI extract
         const useExtraction = (!currentSkills || currentSkills.length === 0) && resumeText

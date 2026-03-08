@@ -32,7 +32,7 @@ export function usePrepareInterview(): UsePrepareInterviewReturn {
           company: company || 'General Practice',
           focusArea,
         })) as InterviewPrepResponse;
-      } catch (err) {
+      } catch {
         return null;
       }
     },

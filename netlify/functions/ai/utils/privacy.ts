@@ -21,7 +21,7 @@ const PII_PATTERNS = {
   creditCard: /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g,
   zipCode: /\b\d{5}(-\d{4})?\b/g,
   ipAddress: /\b(?:\d{1,3}\.){3}\d{1,3}\b/g,
-  url: /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g,
+  url: /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g,
 };
 
 // Replacement strategies
